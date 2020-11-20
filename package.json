@@ -9,7 +9,11 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
-    "vue": "^3.0.0"
+    "lodash": "^4.17.20",
+    "luxon": "^1.25.0",
+    "vue": "^3.0.0",
+    "vue-router": "^3.4.9",
+    "vuex": "^4.0.0-rc.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
