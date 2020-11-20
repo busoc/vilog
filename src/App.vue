@@ -15,7 +15,8 @@
       <div v-if="current.url">
         <Log :log="current" :limit="number"/>
       </div>
-      <div v-else>
+      <div v-else class="alert alert-warning">
+        <h1 class="h3 text-center">No Log files selected</h1>
       </div>
     </main>
   </div>
