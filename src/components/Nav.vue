@@ -4,12 +4,12 @@
     <ul class="navbar-nav">
       <li class="nav-item px-3" title="register host">
         <router-link to='/register' class="nav-link">
-          <span>&#43;</span>
+          <strong>&#43;</strong>
         </router-link>
       </li>
       <li class="nav-item px-3" title="select columns to show">
         <router-link to='/settings' class="nav-link">
-          <span>&#9776;</span>
+          <strong>&#9776;</strong>
         </router-link>
       </li>
     </ul>
@@ -33,5 +33,9 @@ export default {
 
 .navbar-nav {
     flex-direction: row;
+}
+
+.navbar-nav .nav-item .nav-link {
+  font-weight: bold;
 }
 </style>

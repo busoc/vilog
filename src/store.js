@@ -19,18 +19,28 @@ const allFields = [
   {label: "level", field: "", selected: true, position: 0},
   {label: "process", field: "", selected: true, position: 0},
   {label: "pid", field: "", selected: false, position: 0},
-  {label: "message", field: "", selected: true, position: 0},
   {label: "user", field: "", selected: false, position: 0},
   {label: "group", field: "", selected: false, position: 0},
   {label: "host", field: "", selected: false, position: 0},
+  {label: "message", field: "", selected: true, position: 0},
 ]
+
+function initializeFields() {
+  let fields = localStorage["selectedFields"]
+  if (!fields) {
+    fields = allFields
+  } else {
+    fields = JSON.parse(fields)
+  }
+  return fields
+}
 
 export default createStore({
   state: {
     entries: [],
     sources: [],
     info: {},
-    fields: allFields,
+    fields: initializeFields(),
   },
   getters: {
     allFields(state) {
@@ -60,6 +70,7 @@ export default createStore({
   mutations: {
     'update.fields'(state, fields) {
       state.fields = fields
+      localStorage.setItem('selectedFields', JSON.stringify(fields))
     },
     'update.sources'(state, sources) {
       state.sources = sources
