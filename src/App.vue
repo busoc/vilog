@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
+      <div class="container-fluid">
         <a class="navbar-brand" href="/">VILOG</a>
         <form class="form-inline" @submit.prevent>
           <input type="number" min="100" max="1000" id="limit" class="form-control mx-2" v-model="limit"/>
@@ -11,7 +11,7 @@
         </form>
       </div>
     </nav>
-    <main class="container my-5">
+    <main class="container-fluid my-5">
       <div v-if="current.url">
         <Log :log="current" :limit="number"/>
       </div>
