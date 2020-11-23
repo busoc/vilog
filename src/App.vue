@@ -5,14 +5,14 @@
     <div class="container-fluid">
       <div class="row">
         <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse px-0">
-          <Sidebar :sources="sources" @source-changed="onSourceChanged"/>
+          <Sidebar />
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-0" style="margin-top:8px">
           <div v-if="current.url && hasSelectedFields">
-            <Log :log="current" :limit="number"/>
+            <Log />
           </div>
           <div v-else class="alert alert-warning border-0">
-            <h1 class="h4 text-center">No Log files selected</h1>
+            <p class="text-center lead text-muted mb-0">No Log files selected</p>
           </div>
         </main>
       </div>
@@ -29,11 +29,13 @@ export default {
   name: 'App',
   data() {
     return {
-      current: {label: "", url: ""},
       limit: 1000,
     }
   },
   computed: {
+    current() {
+      return this.$store.getters.log
+    },
     hasSelectedFields() {
       return this.$store.getters.selectedFields.length > 0
     },
@@ -54,9 +56,6 @@ export default {
     Sidebar,
     Nav,
   },
-  mounted() {
-    this.$store.dispatch("view.sources");
-  }
 }
 </script>
 

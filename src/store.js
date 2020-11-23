@@ -52,8 +52,12 @@ export default createStore({
     info: {},
     fields: initializeFields(),
     hosts: initializeHosts(),
+    latest: {},
   },
   getters: {
+    log(state) {
+      return state.latest
+    },
     registeredHosts(state) {
       return state.hosts
     },
@@ -82,6 +86,18 @@ export default createStore({
     },
   },
   mutations: {
+    'update.latest'(state, latest) {
+      state.hosts = state.hosts.map(h => {
+        h.sources = h.sources.map(s => {
+          s.active = false
+          return s
+        })
+        return h
+      })
+      latest.active = true
+      state.latest = Object.assign({}, latest)
+      localStorage.setItem("latest", JSON.stringify(latest))
+    },
     'update.hosts'(state, host) {
       state.hosts.push(host)
       localStorage.setItem("registeredHosts", JSON.stringify(state.hosts))
@@ -90,26 +106,35 @@ export default createStore({
       state.fields = fields
       localStorage.setItem('selectedFields', JSON.stringify(fields))
     },
-    'update.sources'(state, sources) {
-      state.sources = sources
-    },
     'update.entries'(state, entries) {
       state.entries = entries
     },
-    'update.info'(state, info) {
-      state.info = info
-    }
+    'update.host'(state, {host, sources}) {
+      let i = state.hosts.findIndex(h => h.addr == host.addr && h.port == host.port)
+      if (i < 0) {
+        return
+      }
+      host.sources = sources.map(s => {
+        s.base = `http://${host.addr}:${host.port}`
+        s.active = false
+        return s
+      })
+      state.hosts.splice(i, 1, host)
+    },
   },
   actions: {
-    'view.sources'({commit}) {
-      return fetchLogs(`${process.env.VUE_APP_API}/sources`, 'sources', commit)
+    'view.entries'({commit}, {source, limit}) {
+      return fetchLogs(`${source.base}${source.url}?limit=${limit}`, 'entries', commit)
     },
-    'view.entries'({commit}, {url, limit}) {
-      limit = limit == 0 ? 100 : limit
-      return fetchLogs(`${process.env.VUE_APP_API}${url}?limit=${limit}`, 'entries', commit)
-    },
-    'view.info'({commit}, url) {
-      return fetchLogs(`${process.env.VUE_APP_API}${url}`, "info", commit)
+    'fetch.sources'({commit}, {host}) {
+      return fetch(`http://${host.addr}:${host.port}${host.source}`).then(rs => {
+        if (!rs.ok) {
+          return Promise.reject(rs.statusText)
+        }
+        return rs.json()
+      }).then(rs => {
+        commit('update.host', {host: host, sources: rs})
+      })
     },
   },
 })

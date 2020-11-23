@@ -79,6 +79,7 @@ export default {
     },
     save() {
       this.$store.commit('update.hosts', this.host)
+      this.$store.dispatch('fetch.sources', {host: this.host})
       this.host = Object.assign({}, defaultHost)
       this.$router.push('/')
     },

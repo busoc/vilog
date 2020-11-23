@@ -1,13 +1,5 @@
 <template>
   <div class="sidebar-sticky">
-    <h5 class="vilog-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted border-bottom">
-      <span>YAMCS-PDC</span>
-    </h5>
-    <ul class="nav flex-column">
-      <li v-for="s in sources" class="nav-item" :key="s.label">
-        <a class="nav-link" href="#" @click.prevent="onClick(s)">{{s.label}}</a>
-      </li>
-    </ul>
     <NoHost :hosts="hosts"/>
     <div v-for="(h, i) in hosts" :key="i">
       <h5 class="vilog-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted border-bottom">
@@ -15,7 +7,9 @@
         <span v-else>{{ h.addr }}:{{ h.port }}</span>
       </h5>
       <ul class="nav flex-column">
-
+        <li v-for="(s, i) in h.sources" class="nav-item" :key="i">
+          <a :class="['nav-link', {'active': isActive(s)}]" href="#" @click.prevent="onClick(s, h)">{{s.label}}</a>
+        </li>
       </ul>
     </div>
   </div>
@@ -26,16 +20,24 @@ import NoHost from './NoHost.vue'
 
 export default {
   name: "Sidebar",
-  props: ["sources"],
   computed: {
     hosts() {
       return this.$store.getters.registeredHosts
     }
   },
   methods: {
-    onClick(source) {
-      this.$emit("source-changed", source)
+    onClick(source, host) {
+      this.$store.commit('update.latest', source)
+      this.$store.dispatch('view.entries', {source, limit: host.limit})
     },
+    isActive(source) {
+      return source.active
+    },
+  },
+  mounted() {
+    this.hosts.forEach(h => {
+      this.$store.dispatch('fetch.sources', {host: h})
+    })
   },
   components: {
     NoHost,

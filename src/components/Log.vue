@@ -36,19 +36,16 @@
 </template>
 <script>
 import TableHeader from './TableHeader.vue'
+// import Filter from './Filter.vue'
 
 import { DateTime } from 'luxon'
 
 export default {
   name: "Log",
-  props: {
-    log: Object,
-    limit: {
-      type: Number,
-      default: 1000,
-    },
-  },
   computed: {
+    log() {
+      return this.$store.getters.log
+    },
     selectedFields() {
       return this.$store.getters.selectedFields
     },
@@ -75,14 +72,6 @@ export default {
       loading: false,
     }
   },
-  watch: {
-    log() {
-      this.update()
-    },
-    limit() {
-      this.update()
-    },
-  },
   methods: {
     valueof(field, entry) {
       switch (field) {
@@ -101,21 +90,11 @@ export default {
       case "host":
         entry = entry == "" ? "-" : entry
         break
+      case "process":
+        entry = entry == "" ? "-" : entry
+        break
       }
       return entry;
-    },
-    update() {
-      if (this.log.url == "") {
-        return
-      }
-      this.reset()
-      let rs = this.$store.dispatch("view.entries", {url: this.log.url, limit: this.limit})
-      rs.then(() => {
-        let start = DateTime.fromISO(this.$store.getters.dtstart).toUTC().startOf('day')
-        let end = DateTime.fromISO(this.$store.getters.dtend).toUTC().endOf('day')
-        this.dtstart = start.toISO().slice(0, -1)
-        this.dtend = end.toISO().slice(0, -1)
-      })
     },
     reset() {
       this.process = ""
@@ -146,9 +125,6 @@ export default {
         return p && v && m && time
       })
     },
-  },
-  mounted() {
-    this.update();
   },
   components: {
     TableHeader,
