@@ -35,14 +35,28 @@ function initializeFields() {
   return fields
 }
 
+function initializeHosts() {
+  let hosts = localStorage["registeredHosts"]
+  if (!hosts) {
+    hosts = []
+  } else{
+    hosts = JSON.parse(hosts)
+  }
+  return hosts
+}
+
 export default createStore({
   state: {
     entries: [],
     sources: [],
     info: {},
     fields: initializeFields(),
+    hosts: initializeHosts(),
   },
   getters: {
+    registeredHosts(state) {
+      return state.hosts
+    },
     allFields(state) {
       return state.fields
     },
@@ -68,6 +82,10 @@ export default createStore({
     },
   },
   mutations: {
+    'update.hosts'(state, host) {
+      state.hosts.push(host)
+      localStorage.setItem("registeredHosts", JSON.stringify(state.hosts))
+    },
     'update.fields'(state, fields) {
       state.fields = fields
       localStorage.setItem('selectedFields', JSON.stringify(fields))

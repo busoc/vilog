@@ -12,27 +12,32 @@
           <form id="register-form" @submit.prevent>
             <div class="form-group">
               <label for="label">label</label>
-              <input type="text" id="label" class="form-control" v-model="label" placeholder="foobar"/>
+              <input type="text" id="label" class="form-control" v-model.trim="host.label" placeholder="foobar"/>
             </div>
             <div class="form-group">
               <label for="addr">address (IP/Hostname)</label>
-              <input type="text" id="addr" class="form-control" v-model="addr" placeholder="127.0.0.1"/>
+              <input type="text" id="addr" class="form-control" v-model.trim="host.addr" placeholder="127.0.0.1"/>
             </div>
             <div class="form-group">
               <label for="port">port</label>
-              <input type="number" min="0" max="65535" id="port" class="form-control" v-model="port" placeholder="9090"/>
+              <input type="number" min="0" max="65535" id="port" class="form-control" v-model.number="host.port" placeholder="9090"/>
             </div>
+            <hr />
             <div class="form-group">
               <label for="source">source</label>
-              <input type="text" id="source" class="form-control" v-model="source" placelhoder="/sources"/>
+              <input type="text" id="source" class="form-control" v-model.trim="host.source" placelhoder="/sources"/>
+            </div>
+            <div class="form-group">
+              <label for="limit">lines</label>
+              <input type="number" id="limit" class="form-control" v-model.number="host.limit" placeholder="1000"/>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <router-link to="/" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
-            <span>Close</span>
+            <span>Cancel</span>
           </router-link>
-          <button type="button" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-primary" @click="save">Save</button>
         </div>
       </div>
     </div>
@@ -42,6 +47,14 @@
 <script>
 import $ from 'jquery'
 import 'bootstrap'
+
+const defaultHost = {
+  label: "",
+  addr: "127.0.0.1",
+  port: 80,
+  source: "/sources",
+  limit: 1000,
+}
 
 export default {
   name: "Host",
@@ -57,15 +70,17 @@ export default {
   },
   data() {
     return {
-      label: "",
-      addr: "127.0.0.1",
-      port: 80,
-      source: "/sources",
+      host: Object.assign({}, defaultHost)
     }
   },
   methods: {
     toggle() {
       $(this.$el).modal('toggle')
+    },
+    save() {
+      this.$store.commit('update.hosts', this.host)
+      this.host = Object.assign({}, defaultHost)
+      this.$router.push('/')
     },
   },
 }

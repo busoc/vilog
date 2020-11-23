@@ -1,6 +1,8 @@
 <template>
   <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">VILOG</a>
+    <router-link class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" to="/">
+      <span>VILOG</span>
+    </router-link>
     <ul class="navbar-nav">
       <li class="nav-item px-3" title="register host">
         <router-link to='/register' class="nav-link">

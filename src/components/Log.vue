@@ -72,6 +72,7 @@ export default {
       message: "",
       dtstart: "",
       dtend: "",
+      loading: false,
     }
   },
   watch: {
