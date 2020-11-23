@@ -4,24 +4,7 @@
       <span>{{log.label}}</span>
       <span class="mx-2 my-1 badge badge-secondary">{{len}}</span>
     </h5>
-    <form class="form-inline my-4 px-3" @submit.prevent>
-          <label for="process">process</label>
-          <select v-model="process" id="process" class="mx-2 form-control form-control-sm">
-            <option value=""></option>
-            <option v-for="p in processes" :key="p" :value="p">{{p}}</option>
-          </select>
-          <label for="level">level</label>
-          <select v-model="level" id="level" class="mx-2 form-control form-control-sm">
-            <option value=""></option>
-            <option v-for="v in levels" :key="v" :value="v">{{v}}</option>
-          </select>
-          <label for="dtstart">start</label>
-          <input v-model="dtstart" type="datetime-local" id="dtstart" class="mx-2 form-control form-control-sm"/>
-          <label for="dtend">end</label>
-          <input v-model="dtend" type="datetime-local" id="dtend" class="mx-2 form-control form-control-sm"/>
-          <label for="message">message</label>
-          <input v-model="message" type="text" id="message" class="mx-2 form-control form-control-sm"/>
-    </form>
+    <Filter />
     <table class="table table-hover">
       <thead class="thead-dark">
         <TableHeader :fields="selectedFields"/>
@@ -36,9 +19,7 @@
 </template>
 <script>
 import TableHeader from './TableHeader.vue'
-// import Filter from './Filter.vue'
-
-import { DateTime } from 'luxon'
+import Filter from './Filter.vue'
 
 export default {
   name: "Log",
@@ -50,26 +31,10 @@ export default {
       return this.$store.getters.selectedFields
     },
     entries() {
-      return this.filter()
-    },
-    processes() {
-      return this.$store.getters.processes
-    },
-    levels() {
-      return this.$store.getters.levels
+      return this.$store.getters.entries
     },
     len() {
       return this.entries.length
-    }
-  },
-  data() {
-    return {
-      process: "",
-      level: "",
-      message: "",
-      dtstart: "",
-      dtend: "",
-      loading: false,
     }
   },
   methods: {
@@ -96,38 +61,10 @@ export default {
       }
       return entry;
     },
-    reset() {
-      this.process = ""
-      this.level = ""
-      this.message = ""
-      this.dtstart = ""
-      this.dtend = ""
-    },
-    filter() {
-      let msg = this.message
-      let lvl = this.level
-      let proc = this.process
-      let dtstart = 0
-      if (this.dtstart != "") {
-        dtend = DateTime.fromISO(this.dtstart).toUTC()
-      }
-      let dtend = 0
-      if (this.dtend != "") {
-        dtend = DateTime.fromISO(this.dtend).toUTC()
-      }
-      return this.$store.state.entries.filter(e => {
-        let p = proc == "" || e.process == proc
-        let v = lvl == "" || e.level == lvl
-        let m = msg == "" || e.message.indexOf(msg) >= 0
-
-        let when = DateTime.fromISO(e.when).toUTC()
-        let time = (dtstart == 0 || when >= dtstart ) && (dtend == 0 || when <= dtend)
-        return p && v && m && time
-      })
-    },
   },
   components: {
     TableHeader,
+    Filter,
   },
 }
 </script>

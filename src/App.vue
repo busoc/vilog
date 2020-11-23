@@ -7,7 +7,7 @@
         <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse px-0">
           <Sidebar />
         </nav>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-0" style="margin-top:8px">
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-0" style="margin-top:24px">
           <div v-if="current.url && hasSelectedFields">
             <Log />
           </div>

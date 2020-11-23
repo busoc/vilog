@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { DateTime } from 'luxon'
 import {createStore} from 'vuex'
 
 function fetchLogs(api, what, commit) {
@@ -24,6 +25,14 @@ const allFields = [
   {label: "host", field: "", selected: false, position: 0},
   {label: "message", field: "", selected: true, position: 0},
 ]
+
+const allCriteria = {
+  process: "",
+  level: "",
+  message: "",
+  dtstart: "",
+  dtend: "",
+}
 
 function initializeFields() {
   let fields = localStorage["selectedFields"]
@@ -53,8 +62,34 @@ export default createStore({
     fields: initializeFields(),
     hosts: initializeHosts(),
     latest: {},
+    criteria: allCriteria,
   },
   getters: {
+    entries(state) {
+      if (_.isEmpty(state.criteria)) {
+        return state.entries
+      }
+      let msg = state.criteria.message
+      let lvl = state.criteria.level
+      let proc = state.criteria.process
+      let dtstart = 0
+      if (state.criteria.dtstart != "") {
+        dtstart = DateTime.fromISO(state.criteria.dtstart).toUTC()
+      }
+      let dtend = 0
+      if (state.criteria.dtend != "") {
+        dtend = DateTime.fromISO(state.criteria.dtend).toUTC()
+      }
+      return state.entries.filter(e => {
+        let p = proc == "" || e.process == proc
+        let v = lvl == "" || e.level == lvl
+        let m = msg == "" || e.message.indexOf(msg) >= 0
+
+        let when = DateTime.fromISO(e.when).toUTC()
+        let time = (dtstart == 0 || when >= dtstart ) && (dtend == 0 || when <= dtend)
+        return p && v && m && time
+      })
+    },
     log(state) {
       return state.latest
     },
@@ -86,6 +121,9 @@ export default createStore({
     },
   },
   mutations: {
+    'apply.filter'(state, criteria) {
+      state.criteria = criteria
+    },
     'update.latest'(state, latest) {
       state.hosts = state.hosts.map(h => {
         h.sources = h.sources.map(s => {
@@ -110,20 +148,31 @@ export default createStore({
       state.entries = entries
     },
     'update.host'(state, {host, sources}) {
-      let i = state.hosts.findIndex(h => h.addr == host.addr && h.port == host.port)
-      if (i < 0) {
-        return
-      }
-      host.sources = sources.map(s => {
+      sources = sources.map(s => {
         s.base = `http://${host.addr}:${host.port}`
         s.active = false
         return s
       })
-      state.hosts.splice(i, 1, host)
+      let i = state.hosts.findIndex(h => h.addr == host.addr && h.port == host.port)
+      if (i < 0) {
+        state.hosts.push(Object.assign(host, {sources}))
+      } else {
+        state.hosts.splice(i, 1, Object.assign(host, {sources}))
+      }
+      localStorage.setItem("registeredHosts", JSON.stringify(state.hosts))
+    },
+    'remove.host'(state, host) {
+      let i = state.hosts.findIndex(h => h.addr == host.addr && h.port == host.port)
+      if (i < 0) {
+        return
+      }
+      state.hosts.splice(i, 1)
+      localStorage.setItem("registeredHosts", JSON.stringify(state.hosts))
     },
   },
   actions: {
     'view.entries'({commit}, {source, limit}) {
+      commit('apply.filter', allCriteria)
       return fetchLogs(`${source.base}${source.url}?limit=${limit}`, 'entries', commit)
     },
     'fetch.sources'({commit}, {host}) {

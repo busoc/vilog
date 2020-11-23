@@ -5,10 +5,11 @@
       <h5 class="vilog-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted border-bottom">
         <span v-if="h.label">{{ h.label }}</span>
         <span v-else>{{ h.addr }}:{{ h.port }}</span>
+        <a type="button" class="btn btn-light" href="#" title="remove host" @click.prevent="onRemove(h)">&minus;</a>
       </h5>
       <ul class="nav flex-column">
         <li v-for="(s, i) in h.sources" class="nav-item" :key="i">
-          <a :class="['nav-link', {'active': isActive(s)}]" href="#" @click.prevent="onClick(s, h)">{{s.label}}</a>
+          <a :class="['nav-link', {'active': isActive(s)}]" href="#" @click.prevent="onSelect(s, h)">{{s.label}}</a>
         </li>
       </ul>
     </div>
@@ -26,9 +27,12 @@ export default {
     }
   },
   methods: {
-    onClick(source, host) {
+    onSelect(source, host) {
       this.$store.commit('update.latest', source)
       this.$store.dispatch('view.entries', {source, limit: host.limit})
+    },
+    onRemove(host) {
+      this.$store.commit('remove.host', host)
     },
     isActive(source) {
       return source.active
