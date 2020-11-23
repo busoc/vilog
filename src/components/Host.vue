@@ -10,6 +10,7 @@
         </div>
         <div class="modal-body">
           <form id="register-form" @submit.prevent>
+            <p v-if="err" class="alert alert-danger border-0">{{err}}</p>
             <div class="form-group">
               <label for="label">label</label>
               <input type="text" id="label" class="form-control" v-model.trim="host.label" placeholder="foobar"/>
@@ -70,7 +71,8 @@ export default {
   },
   data() {
     return {
-      host: Object.assign({}, defaultHost)
+      host: Object.assign({}, defaultHost),
+      err:  "",
     }
   },
   methods: {
@@ -78,10 +80,14 @@ export default {
       $(this.$el).modal('toggle')
     },
     save() {
-      this.$store.commit('update.hosts', this.host)
-      this.$store.dispatch('fetch.sources', {host: this.host})
-      this.host = Object.assign({}, defaultHost)
-      this.$router.push('/')
+      this.$store.dispatch('fetch.sources', {host: this.host}).then(() => {
+        this.$store.commit('update.hosts', this.host)
+        this.host = Object.assign({}, defaultHost)
+        this.err = undefined
+        this.$router.push('/')
+      }).catch(() => {
+        this.err = "invalid information provided"
+      })
     },
   },
 }
