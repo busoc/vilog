@@ -1,17 +1,20 @@
 <template>
-  <div>
-    <h1 class="border-bottom">{{log.label}}<span class="mx-2 my-1 badge badge-secondary">{{len}}</span></h1>
-    <form class="form-inline my-4" @submit.prevent>
+  <div style="margin-top:18px;">
+    <h5 class="border-bottom vilog-heading text-muted px-3">
+      <span>{{log.label}}</span>
+      <span class="mx-2 my-1 badge badge-secondary">{{len}}</span>
+    </h5>
+    <form class="form-inline my-4 px-3" @submit.prevent>
           <label for="process">process</label>
           <select v-model="process" id="process" class="mx-2 form-control form-control-sm">
             <option value=""></option>
             <option v-for="p in processes" :key="p" :value="p">{{p}}</option>
           </select>
-          <!-- <label for="level">level</label> -->
-          <!-- <select v-model="level" id="level" class="mx-2 form-control form-control-sm">
+          <label for="level">level</label>
+          <select v-model="level" id="level" class="mx-2 form-control form-control-sm">
             <option value=""></option>
             <option v-for="v in levels" :key="v" :value="v">{{v}}</option>
-          </select> -->
+          </select>
           <label for="dtstart">start</label>
           <input v-model="dtstart" type="datetime-local" id="dtstart" class="mx-2 form-control form-control-sm"/>
           <label for="dtend">end</label>
@@ -26,7 +29,7 @@
           <th scope="col" class="text-center">Level</th>
           <th scope="col">Process</th>
           <th scope="col" class="text-center">PID</th>
-          <th scope="col">Message</th>
+          <th scope="col" class="w-50">Message</th>
         </tr>
       </thead>
       <tbody>
