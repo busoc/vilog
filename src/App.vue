@@ -8,7 +8,7 @@
           <Sidebar :sources="sources" @source-changed="onSourceChanged"/>
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-0" style="margin-top:8px">
-          <div v-if="current.url">
+          <div v-if="current.url && hasSelectedFields">
             <Log :log="current" :limit="number"/>
           </div>
           <div v-else class="alert alert-warning border-0">
@@ -34,6 +34,9 @@ export default {
     }
   },
   computed: {
+    hasSelectedFields() {
+      return this.$store.getters.selectedFields.length > 0
+    },
     sources() {
       return this.$store.state.sources
     },

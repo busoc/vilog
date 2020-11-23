@@ -24,27 +24,18 @@
     </form>
     <table class="table table-hover">
       <thead class="thead-dark">
-        <tr>
-          <th scope="col">Time</th>
-          <th scope="col" class="text-center">Level</th>
-          <th scope="col">Process</th>
-          <th scope="col" class="text-center">PID</th>
-          <th scope="col" class="w-50">Message</th>
-        </tr>
+        <TableHeader :fields="selectedFields"/>
       </thead>
       <tbody>
-        <tr v-for="(e, i) in entries" :key="i">
-          <td>{{e.when}}</td>
-          <td class="text-center text-uppercase">{{e.level != "" ? e.level : "-"}}</td>
-          <td>{{e.process != "" ? e.process : log.label}}</td>
-          <td class="text-center">{{e.pid != 0 ? e.pid : "-"}}</td>
-          <td>{{e.message}}</td>
+        <tr v-for="(e, j) in entries" :key="j">
+          <td v-for="f in selectedFields" :key="f.label">{{ valueof(f.field, e[f.field]) }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 </template>
 <script>
+import TableHeader from './TableHeader.vue'
 
 import { DateTime } from 'luxon'
 
@@ -58,11 +49,14 @@ export default {
     },
   },
   computed: {
+    selectedFields() {
+      return this.$store.getters.selectedFields
+    },
     entries() {
       return this.filter()
     },
     processes() {
-        return this.$store.getters.processes
+      return this.$store.getters.processes
     },
     levels() {
       return this.$store.getters.levels
@@ -89,6 +83,26 @@ export default {
     },
   },
   methods: {
+    valueof(field, entry) {
+      switch (field) {
+      case "pid":
+        entry = entry == 0 ? "-" : entry
+        break
+      case "level":
+        entry = entry == "" ? "-" : entry
+        break
+      case "user":
+        entry = entry == "" ? "-" : entry
+        break
+      case "group":
+        entry = entry == "" ? "-" : entry
+        break
+      case "host":
+        entry = entry == "" ? "-" : entry
+        break
+      }
+      return entry;
+    },
     update() {
       if (this.log.url == "") {
         return
@@ -134,6 +148,9 @@ export default {
   },
   mounted() {
     this.update();
+  },
+  components: {
+    TableHeader,
   },
 }
 </script>

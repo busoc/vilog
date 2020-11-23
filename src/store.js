@@ -18,7 +18,7 @@ const allFields = [
   {label: "time", field: "when", selected: true, position: 0},
   {label: "level", field: "", selected: true, position: 0},
   {label: "process", field: "", selected: true, position: 0},
-  {label: "pid", field: "", selected: true, position: 0},
+  {label: "pid", field: "", selected: false, position: 0},
   {label: "message", field: "", selected: true, position: 0},
   {label: "user", field: "", selected: false, position: 0},
   {label: "group", field: "", selected: false, position: 0},
@@ -30,9 +30,18 @@ export default createStore({
     entries: [],
     sources: [],
     info: {},
-    columns: allFields,
+    fields: allFields,
   },
   getters: {
+    allFields(state) {
+      return state.fields
+    },
+    selectedFields(state) {
+      return state.fields.filter(f => f.selected).map(f => {
+        f.field = f.field == "" ? f.label : f.field
+        return {label: f.label, field: f.field}
+      })
+    },
     processes(state) {
       return _.chain(state.entries).uniqBy('process').map(e => e.process).value()
     },
@@ -49,6 +58,9 @@ export default createStore({
     },
   },
   mutations: {
+    'update.fields'(state, fields) {
+      state.fields = fields
+    },
     'update.sources'(state, sources) {
       state.sources = sources
     },

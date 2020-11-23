@@ -12,7 +12,10 @@
           <form @submit.prevent>
             <div class="form-group" v-for="c in columns" :key="c.label">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" v-model="c.selected" :id="c.label">
+                <input class="form-check-input" type="checkbox"
+                  v-model="c.selected"
+                  @change="apply"
+                  :id="c.label">
                 <label class="form-check-label" :for="c.label">
                   <span>{{c.label}}</span>
                 </label>
@@ -24,7 +27,6 @@
           <router-link to="/" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
             <span>Close</span>
           </router-link>
-          <button type="button" class="btn btn-primary">Apply</button>
         </div>
       </div>
     </div>
@@ -48,14 +50,14 @@ export default {
     $(this.$el).modal({show: false, keyboard: false, backdrop: 'static'})
   },
   data() {
-    return {}
-  },
-  computed: {
-    columns() {
-      return this.$store.state.columns
+    return {
+      columns: this.$store.getters.allFields,
     }
   },
   methods: {
+    apply() {
+      this.$store.commit('update.fields', this.columns)
+    },
     toggle() {
       $(this.$el).modal('toggle')
     },
