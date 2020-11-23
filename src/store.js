@@ -14,11 +14,23 @@ function fetchLogs(api, what, commit) {
     })
 }
 
+const allFields = [
+  {label: "time", field: "when", selected: true, position: 0},
+  {label: "level", field: "", selected: true, position: 0},
+  {label: "process", field: "", selected: true, position: 0},
+  {label: "pid", field: "", selected: true, position: 0},
+  {label: "message", field: "", selected: true, position: 0},
+  {label: "user", field: "", selected: false, position: 0},
+  {label: "group", field: "", selected: false, position: 0},
+  {label: "host", field: "", selected: false, position: 0},
+]
+
 export default createStore({
   state: {
     entries: [],
     sources: [],
     info: {},
+    columns: allFields,
   },
   getters: {
     processes(state) {

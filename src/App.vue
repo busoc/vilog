@@ -1,5 +1,6 @@
 <template>
   <div style="position:relative">
+    <router-view></router-view>
     <Nav />
     <div class="container-fluid">
       <div class="row">

@@ -2,15 +2,15 @@
   <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">VILOG</a>
     <ul class="navbar-nav">
-      <li class="nav-item px-3" title="connect to host">
-        <a class="nav-link" href="#">
+      <li class="nav-item px-3" title="register host">
+        <router-link to='/register' class="nav-link">
           <span>&#43;</span>
-        </a>
+        </router-link>
       </li>
       <li class="nav-item px-3" title="select columns to show">
-        <a class="nav-link" href="#">
+        <router-link to='/settings' class="nav-link">
           <span>&#9776;</span>
-        </a>
+        </router-link>
       </li>
     </ul>
   </nav>

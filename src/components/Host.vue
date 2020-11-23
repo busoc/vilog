@@ -1,0 +1,72 @@
+<template>
+  <div class="modal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Register host</h5>
+          <router-link to="/" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </router-link>
+        </div>
+        <div class="modal-body">
+          <form id="register-form" @submit.prevent>
+            <div class="form-group">
+              <label for="label">label</label>
+              <input type="text" id="label" class="form-control" v-model="label" placeholder="foobar"/>
+            </div>
+            <div class="form-group">
+              <label for="addr">address (IP/Hostname)</label>
+              <input type="text" id="addr" class="form-control" v-model="addr" placeholder="127.0.0.1"/>
+            </div>
+            <div class="form-group">
+              <label for="port">port</label>
+              <input type="number" min="0" max="65535" id="port" class="form-control" v-model="port" placeholder="9090"/>
+            </div>
+            <div class="form-group">
+              <label for="source">source</label>
+              <input type="text" id="source" class="form-control" v-model="source" placelhoder="/sources"/>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <router-link to="/" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">
+            <span>Close</span>
+          </router-link>
+          <button type="button" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import $ from 'jquery'
+import 'bootstrap'
+
+export default {
+  name: "Host",
+  beforeRouteEnter(to, from, next) {
+    next(v => v.toggle());
+  },
+  beforeRouteLeave(to, from, next) {
+    this.toggle()
+    return next()
+  },
+  mounted() {
+    $(this.$el).modal({show: false, keyboard: false, backdrop: 'static'})
+  },
+  data() {
+    return {
+      label: "",
+      addr: "127.0.0.1",
+      port: 80,
+      source: "/sources",
+    }
+  },
+  methods: {
+    toggle() {
+      $(this.$el).modal('toggle')
+    },
+  },
+}
+</script>
