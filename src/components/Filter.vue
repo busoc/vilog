@@ -1,5 +1,5 @@
 <template>
-  <form class="form-inline my-4 px-3" @submit.prevent>
+  <form class="form-inline my-4 px-3" @submit.prevent="apply">
         <label for="process">process</label>
         <select @change="apply" :disabled="processes.length <= 1" v-model="process" id="process" class="mx-2 form-control form-control-sm">
           <option value=""></option>

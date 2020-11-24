@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-sticky">
     <NoHost :hosts="hosts"/>
-    <div v-for="(h, i) in hosts" :key="i">
+    <div v-for="(h, i) in hosts" :key="i" class="mb-3">
       <h5 class="vilog-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted border-bottom">
         <span v-if="h.label">{{ h.label }}</span>
         <span v-else>{{ h.addr }}:{{ h.port }}</span>
@@ -30,6 +30,7 @@ export default {
     onSelect(source, host) {
       this.$store.commit('update.latest', source)
       this.$store.dispatch('view.entries', {source, limit: host.limit})
+      this.$store.dispatch('fetch.detail', source)
     },
     onRemove(host) {
       this.$store.commit('remove.host', host)
@@ -53,7 +54,8 @@ export default {
 .sidebar-sticky {
   position: relative;
   top: 0;
-  height: calc(100vh - 48px);
+  height: calc(100vh - 48px - 120px);
+  margin-bottom: 120px;
   padding-top: .5rem;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */

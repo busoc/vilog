@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { DateTime } from 'luxon'
 import {createStore} from 'vuex'
 
-function fetchLogs(api, what, commit) {
+function fetchLogs(api, source, commit) {
   return fetch(api)
     .then(rs => {
       if (!rs.ok) {
@@ -11,7 +11,8 @@ function fetchLogs(api, what, commit) {
       return rs.json()
     })
     .then(rs => {
-      commit(`update.${what}`, _.reverse(rs))
+      commit(`update.entries`, _.reverse(rs))
+      commit(`update.latest`, source)
     })
 }
 
@@ -54,14 +55,26 @@ function initializeHosts() {
   return hosts
 }
 
+const latest = {url: "", label: ""}
+
+function initializeLatest() {
+  let curr = localStorage["latest"]
+  if (!curr) {
+    curr = Object.assign({}, latest)
+  } else {
+    curr = JSON.parse(curr)
+  }
+  return curr
+}
+
 export default createStore({
   state: {
     entries: [],
     sources: [],
-    info: {},
+    info: {size: 0, modtime: 0, file: ""},
     fields: initializeFields(),
     hosts: initializeHosts(),
-    latest: {},
+    latest: initializeLatest(),
     criteria: allCriteria,
   },
   getters: {
@@ -124,17 +137,16 @@ export default createStore({
     'apply.filter'(state, criteria) {
       state.criteria = criteria
     },
-    'update.latest'(state, latest) {
+    'update.latest'(state, source) {
       state.hosts = state.hosts.map(h => {
         h.sources = h.sources.map(s => {
-          s.active = false
+          s.active = s.url == source.url && s.base == source.base
           return s
         })
         return h
       })
-      latest.active = true
-      state.latest = Object.assign({}, latest)
-      localStorage.setItem("latest", JSON.stringify(latest))
+      state.latest = source
+      localStorage.setItem("latest", JSON.stringify(source))
     },
     'update.hosts'(state, host) {
       state.hosts.push(host)
@@ -159,6 +171,9 @@ export default createStore({
       } else {
         state.hosts.splice(i, 1, Object.assign(host, {sources}))
       }
+      if (!state.hosts.length) {
+        state.entries = []
+      }
       localStorage.setItem("registeredHosts", JSON.stringify(state.hosts))
     },
     'remove.host'(state, host) {
@@ -166,14 +181,46 @@ export default createStore({
       if (i < 0) {
         return
       }
+      if (!_.isEmpty(state.latest) && state.latest.base) {
+        let base = `http://${host.addr}:${host.port}`
+        if (base == state.latest.base) {
+          state.latest = Object.assign({}, latest)
+          delete localStorage["latest"]
+        }
+      }
       state.hosts.splice(i, 1)
       localStorage.setItem("registeredHosts", JSON.stringify(state.hosts))
     },
+    'update.info'(state, info) {
+      state.info = Object.assign({}, info)
+    }
   },
   actions: {
     'view.entries'({commit}, {source, limit}) {
       commit('apply.filter', allCriteria)
-      return fetchLogs(`${source.base}${source.url}?limit=${limit}`, 'entries', commit)
+      commit('update.entries', [])
+      return fetchLogs(`${source.base}${source.url}?limit=${limit}`, source, commit)
+    },
+    'fetch.latest'({commit, state}) {
+      commit('apply.filter', allCriteria)
+      if (!state.latest.base) {
+        return
+      }
+      return fetchLogs(`${state.latest.base}${state.latest.url}`, state.latest, commit)
+    },
+    'fetch.detail'({state, commit}, source) {
+      if (!source) {
+        source = state.latest
+      }
+      commit('update.info', source)
+      return fetch(`${source.base}${source.url}/detail`).then(rs => {
+        if (!rs.ok) {
+          return Promise.reject(rs.statusText)
+        }
+        return rs.json()
+      }).then(rs => {
+        commit('update.info', rs)
+      })
     },
     'fetch.sources'({commit}, {host}) {
       return fetch(`http://${host.addr}:${host.port}${host.source}`).then(rs => {

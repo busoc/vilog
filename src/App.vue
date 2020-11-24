@@ -6,6 +6,7 @@
       <div class="row">
         <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse px-0">
           <Sidebar />
+          <Info />
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-0" style="margin-top:24px">
           <div v-if="current.url && hasSelectedFields">
@@ -24,6 +25,7 @@
 import Log from './components/Log.vue'
 import Sidebar from './components/Sidebar.vue'
 import Nav from './components/Nav.vue'
+import Info from './components/Info.vue'
 
 export default {
   name: 'App',
@@ -55,6 +57,11 @@ export default {
     Log,
     Sidebar,
     Nav,
+    Info,
+  },
+  mounted() {
+    this.$store.dispatch('fetch.latest')
+    this.$store.dispatch('fetch.detail')
   },
 }
 </script>
