@@ -67,11 +67,13 @@ function initializeLatest() {
   return curr
 }
 
+const info = {size: 0, modtime: 0, file: ""}
+
 export default createStore({
   state: {
     entries: [],
     sources: [],
-    info: {size: 0, modtime: 0, file: ""},
+    info: info,
     fields: initializeFields(),
     hosts: initializeHosts(),
     latest: initializeLatest(),
@@ -185,6 +187,7 @@ export default createStore({
         let base = `http://${host.addr}:${host.port}`
         if (base == state.latest.base) {
           state.latest = Object.assign({}, latest)
+          state.info = Object.assign({}, info)
           delete localStorage["latest"]
         }
       }
