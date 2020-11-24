@@ -10,15 +10,25 @@
         </div>
         <div class="modal-body">
           <form @submit.prevent>
-            <div class="form-group" v-for="c in columns" :key="c.label">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox"
-                  v-model="c.selected"
-                  @change="apply"
-                  :id="c.label">
-                <label class="form-check-label" :for="c.label">
-                  <span>{{c.label}}</span>
-                </label>
+              <div class="form-group" v-for="(c, i) in columns" :key="c.label">
+                <div class="d-flex justify-content-between">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox"
+                    v-model="c.selected"
+                    @change="apply"
+                    :id="c.label">
+                  <label class="form-check-label" :for="c.label">
+                    <span>{{c.label}}</span>
+                  </label>
+                </div>
+                <div class="">
+                  <button v-if="i > 0" type="button" class="mx-1 btn btn-light" @click="moveUp(i)">
+                    <strong>&uarr;</strong>
+                  </button>
+                  <button v-if="i < columns.length-1" type="button" class="mx-1 btn btn-light" @click="moveDown(i)">
+                    <strong>&darr;</strong>
+                  </button>
+                </div>
               </div>
             </div>
           </form>
@@ -60,6 +70,18 @@ export default {
     },
     toggle() {
       $(this.$el).modal('toggle')
+    },
+    moveUp(ix) {
+      let curr = this.columns[ix]
+      this.columns[ix] = this.columns[ix-1]
+      this.columns[ix-1] = curr
+      this.$store.commit('update.fields', this.columns)
+    },
+    moveDown(ix) {
+      let curr = this.columns[ix]
+      this.columns[ix] = this.columns[ix+1]
+      this.columns[ix+1] = curr
+      this.$store.commit('update.fields', this.columns)
     },
   },
 }
