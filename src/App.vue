@@ -8,7 +8,7 @@
           <Sidebar />
           <Info />
         </nav>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-0" style="margin-top:24px">
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-0 border-left" style="margin-top:24px">
           <div v-if="current.url && hasSelectedFields">
             <Log />
           </div>

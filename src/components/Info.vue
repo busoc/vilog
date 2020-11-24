@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-12 col-lg-12 d-md-block bg-light px-3 py-2 border-top bg-light">
+  <div class="col-md-12 col-lg-12 d-md-block bg-light px-3 py-2 border-top border-right bg-light">
     <dl class="row" v-if="filename">
       <dt class="col-4">file</dt>
       <dd class="col-8 text-right">{{filename}}</dd>
@@ -25,17 +25,25 @@ export default {
   computed: {
     size() {
       let z = this.$store.state.info.size
+      let unit = ""
+      let factor = 1
       if (z < kilo) {
-        return z
+        // do nothing
       } else if (z < mega) {
-        return `${z >> 10}KB`
+        unit = "KB"
+        factor = kilo
       } else if (z < giga) {
-        return `${z >> 20}MB`
+        unit = "MB"
+        factor = mega
       } else if (z < tera) {
-        return `${z >> 30}GB`
+        unit = "GB"
+        factor = giga
       } else {
-        return `${z >> 40}TB`
+        unit = "TB"
+        factor = tera
       }
+      z = z/factor
+      return `${z.toFixed(2)}${unit}`
     },
     filename() {
       return this.$store.state.info.file
