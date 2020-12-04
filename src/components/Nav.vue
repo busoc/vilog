@@ -6,12 +6,12 @@
     <ul class="navbar-nav">
       <li class="nav-item px-3" title="register host">
         <router-link to='/register' class="nav-link">
-          <strong>&#43;</strong>
+          <i data-feather="plus-square"></i>
         </router-link>
       </li>
       <li class="nav-item px-3" title="select columns to show">
         <router-link to='/settings' class="nav-link">
-          <strong>&#9776;</strong>
+          <i data-feather="settings"></i>
         </router-link>
       </li>
     </ul>
@@ -19,8 +19,12 @@
 </template>
 
 <script>
+import feather from 'feather-icons'
 export default {
   name: "Nav",
+  mounted() {
+    feather.replace()
+  }
 }
 </script>
 

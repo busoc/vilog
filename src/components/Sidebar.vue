@@ -5,7 +5,9 @@
       <h5 class="vilog-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-2 text-muted border-bottom">
         <span v-if="h.label">{{ h.label }}</span>
         <span v-else>{{ h.addr }}:{{ h.port }}</span>
-        <a type="button" class="btn btn-light" href="#" title="remove host" @click.prevent="onRemove(h)">&minus;</a>
+        <a type="button" class="btn btn-light" href="#" title="remove host" @click.prevent="onRemove(h)">
+          <i data-feather="minus"></i>
+        </a>
       </h5>
       <ul class="nav flex-column">
         <li v-for="(s, i) in h.sources" class="nav-item" :key="i">
@@ -18,6 +20,7 @@
 
 <script>
 import NoHost from './NoHost.vue'
+import feather from 'feather-icons'
 
 export default {
   name: "Sidebar",
@@ -43,6 +46,10 @@ export default {
     this.hosts.forEach(h => {
       this.$store.dispatch('fetch.sources', {host: h})
     })
+    feather.replace()
+  },
+  updated() {
+    feather.replace()
   },
   components: {
     NoHost,
@@ -72,5 +79,10 @@ export default {
 
 .sidebar-sticky .nav-link:hover .feather {
   color: inherit;
+}
+
+.feather {
+  width: 16px;
+  height: 16px;
 }
 </style>
