@@ -23,10 +23,10 @@
                 </div>
                 <div class="">
                   <button v-if="i > 0" type="button" class="mx-1 btn btn-light" @click="moveUp(i)">
-                    <strong>&uarr;</strong>
+                    <i data-feather="arrow-up"></i>
                   </button>
                   <button v-if="i < columns.length-1" type="button" class="mx-1 btn btn-light" @click="moveDown(i)">
-                    <strong>&darr;</strong>
+                    <i data-feather="arrow-down"></i>
                   </button>
                 </div>
               </div>
@@ -46,6 +46,7 @@
 <script>
 import $ from 'jquery'
 import 'bootstrap'
+import feather from 'feather-icons'
 
 export default {
   name: "Columns",
@@ -57,6 +58,7 @@ export default {
     return next()
   },
   mounted() {
+    feather.replace()
     $(this.$el).modal({show: false, keyboard: false, backdrop: 'static'})
   },
   data() {
@@ -86,3 +88,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.feather{
+  width: 16px;
+  height: 16px;
+}
+</style>
