@@ -6,3 +6,7 @@ body {
   font-size: 1.15rem;
   text-transform: uppercase;
 }
+
+table.table > tbody > tr > td {
+  font-size: 0.9rem;
+}
