@@ -5,7 +5,7 @@
       <span class="mx-2 my-1 badge badge-secondary">{{len}}</span>
     </h5>
     <Filter />
-    <table class="table table-hover">
+    <table class="table table-hover table-sm">
       <thead class="thead-dark">
         <TableHeader :fields="selectedFields"/>
       </thead>
